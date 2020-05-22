@@ -4,6 +4,8 @@ services:
     build:
       context: initiate_call
     image: startcall
+    ports:
+      - "8080:80"
     environment:
       - VIRTUAL_HOST=call.ichdev.net
       - LETSENCRYPT_HOST=call.ichdev.net

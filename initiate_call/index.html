@@ -1,70 +1,68 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <script src='https://call.parsons.group/external_api.js'></script> 
-    </head>
+    <head><script src='https://call.parsons.group/external_api.js'></script> </head>
     <body>
-        <input id="number_input">
-        <button type="button" onclick="initiate()">Start call</button>
-        <div id="video_target"></div>
-        <script>
-            function getRandomInt(max) {
-                return Math.floor(Math.random() * Math.floor(max));
+    <input id="number_input">
+    <button type="button" onclick="initiate()">Start call</button>
+    <div id="video_target"></div>
+    <script>
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * Math.floor(max));
+        }
+        function getUserId(username, password) {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "GET", 'https://api.sipgate.com/v2/users', false );
+            xmlHttp.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + password))
+            xmlHttp.send( null );
+            return xmlHttp.responseText;
+        }
+        function getSmsId(username, password, userId) {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "GET", 'https://api.sipgate.com/v2/' + userId + '/sms', false );
+            xmlHttp.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + password))
+            xmlHttp.send( null );
+            return xmlHttp.responseText;
+        }
+        function sendSms(username, password, smsId, number, body) {
+            console.log('Sending SMS:');
+            console.log('===');
+            console.log('Number: ' + number);
+            console.log('Body: ' + body);
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "POST", 'https://api.sipgate.com/v1/sessions/sms', false );
+            xmlHttp.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + password))
+            xmlHttp.setRequestHeader('Content-Type', 'application/json');
+            xmlHttp.setRequestHeader('Accept', 'application/json');
+            xmlHttp.send( JSON.stringify({
+                smsId: smsId,
+                recipient: '' + number,
+                message: body
+            }) );
+        }
+        function openJitsi(callId) {
+            let domain = 'call.parsons.group';
+            let options = {
+                roomName: callId,
+                width: 700,
+                height: 700,
+                parentNode: document.querySelector('#video_target')
+            };
+            let api = new JitsiMeetExternalAPI(domain, options);
+        }
+        function initiate() {
+            let number = document.getElementById('number_input').value;
+            if (number != '') {
+                let username = '';
+                let password = '';
+                let callId = 'er_' + getRandomInt();
+                let callUrl = 'https://call.parsons.group/' + callId;
+                let body = 'Video-Telefonat: ' + callUrl;
+                let userId = getUserId(username, password);
+                let smsId = getSmsId(username, password, userId);
+                sendSms(username, password, smsId, body);
+                openJitsi(callId);
             }
-            function getUserId(username, password) {
-                var xmlHttp = new XMLHttpRequest();
-                xmlHttp.open( "GET", 'https://api.sipgate.com/v2/users', false );
-                xmlHttp.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + password))                
-                xmlHttp.send( null );
-                return xmlHttp.responseText;
-            }
-            function getSmsId(username, password, userId) {
-                var xmlHttp = new XMLHttpRequest();
-                xmlHttp.open( "GET", 'https://api.sipgate.com/v2/' + userId + '/sms', false );
-                xmlHttp.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + password))                
-                xmlHttp.send( null );
-                return xmlHttp.responseText;
-            }
-            function sendSms(username, password, smsId, number, body) {
-                console.log('Sending SMS:');
-                console.log('===');
-                console.log('Number: ' + number);
-                console.log('Body: ' + body);
-                var xmlHttp = new XMLHttpRequest();
-                xmlHttp.open( "POST", 'https://api.sipgate.com/v1/sessions/sms', false );
-                xmlHttp.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + password))                
-                xmlHttp.setRequestHeader('Content-Type', 'application/json');
-                xmlHttp.setRequestHeader('Accept', 'application/json');
-                xmlHttp.send( JSON.stringify({
-                    smsId: smsId,
-                    recipient: '' + number,
-                    message: body
-                }) );
-            }
-            function openJitsi(callId) {
-                let domain = 'call.parsons.group';
-                let options = {
-                    roomName: callId,
-                    width: 700,
-                    height: 700,
-                    parentNode: document.querySelector('#video_target')
-                };
-                let api = new JitsiMeetExternalAPI(domain, options);
-            }
-            function initiate() {
-                let number = document.getElementById('number_input').value;
-                if (number != '') {
-                    let username = '';
-                    let password = '';
-                    let callId = 'er_' + getRandomInt();
-                    let callUrl = 'https://call.parsons.group/' + callId;
-                    let body = 'Video-Telefonat: ' + callUrl;
-                    let userId = getUserId(username, password);
-                    let smsId = getSmsId(username, password, userId);
-                    sendSms(username, password, smsId, body);
-                    openJitsi(callId);
-                }
-            }
-        </script>
+        }
+    </script>
     </body>
 </html>
