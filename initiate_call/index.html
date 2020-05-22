@@ -48,6 +48,7 @@
                 parentNode: document.querySelector('#video_target')
             };
             let api = new JitsiMeetExternalAPI(domain, options);
+            console.log(domain+"/"+callId);
         }
         function initiate() {
             let number = document.getElementById('number_input').value;
