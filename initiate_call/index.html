@@ -55,7 +55,7 @@
             if (number != '') {
                 let username = '';
                 let password = '';
-                let callId = 'er_' + getRandomInt();
+                let callId = 'er_' + getRandomInt(999999999999999);
                 let callUrl = 'https://call.parsons.group/' + callId;
                 let body = 'Video-Telefonat: ' + callUrl;
                 let userId = getUserId(username, password);
