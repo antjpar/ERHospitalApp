@@ -1,0 +1,10 @@
+version: "3"
+services:
+  start_call:
+    build:
+      context: initiate_call
+    image: startcall
+    environment:
+      - VIRTUAL_HOST=call.ichdev.net
+      - LETSENCRYPT_HOST=call.ichdev.net
+
