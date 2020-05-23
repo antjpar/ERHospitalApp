@@ -229,6 +229,10 @@ class Server(object):
             return JITSI_BASE_URL + id
         else:
             raise cherrypy.HTTPError(404)
+    @cherrypy.expose
+    def index(self):
+        return "API-v0!"
+
 
 
 def CORS():
