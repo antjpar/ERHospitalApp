@@ -6,6 +6,7 @@ import uuid
 
 MINUTES_PER_CALL = 2
 MINUTES_PER_PATIENT = 5
+JITSI_BASE_URL = 'https://call.parsons.group/'
 
 
 class PrioQueue(object):
@@ -209,7 +210,7 @@ class Server(object):
         if found:
             self.call_queue.remove(found)
             self.call_ongoing.append(found)
-            # todo: send sms and return jitsi url?
+            return 'true'
         else:
             raise cherrypy.HTTPError(404)
 
@@ -219,6 +220,13 @@ class Server(object):
         if found:
             self.call_ongoing.remove(found)
             return 'true'
+        else:
+            raise cherrypy.HTTPError(404)
+
+    def call_url(self, id):
+        found = self.find_ongoing_call(id)
+        if found:
+            return JITSI_BASE_URL + id
         else:
             raise cherrypy.HTTPError(404)
 
