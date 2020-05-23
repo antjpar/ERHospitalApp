@@ -1,0 +1,40 @@
+version: "3"
+services:
+  start_call:
+    build:
+      context: initiate_call
+    image: startcall
+    environment:
+      - VIRTUAL_HOST=call.ichdev.net
+      - LETSENCRYPT_HOST=call.ichdev.net
+      - API=server:3000
+    networks:
+      - webproxy
+    ports:
+      - "3001:80"
+  server:
+    image: server
+    build:
+      context: server
+    ports:
+      - "3000:3000"
+    networks:
+      - webproxy
+  app:
+    image: app
+    build:
+      context: er-hospital
+
+      args:
+        VUE_APP_API_URL: localahost:3000
+    environment:
+      - VUE_APP_API_URL=localahost:3000
+    ports:
+      - "8080:80"
+    networks:
+      - webproxy
+
+networks:
+  webproxy:
+    external:
+      name: webproxy
