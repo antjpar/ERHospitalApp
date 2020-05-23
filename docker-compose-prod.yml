@@ -7,7 +7,7 @@ services:
     environment:
       - VIRTUAL_HOST=api.ichdev.net
       - VIRTUAL_PORT=8080
-      - LETSENCRYPT_HOST=call.ichdev.net
+      - LETSENCRYPT_HOST=api.ichdev.net
     networks:
       - webproxy
   start_call:
