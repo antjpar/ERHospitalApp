@@ -30,42 +30,54 @@ Ended: The consultation has ended. The patient has been dismissed.
 
 ### API ###
 1. Warteschlange
-   1. Get waiting time
-      * Entrypoint: appointments/waitingtime
+   1. Get Queue Length and Wait Time
+      * Entrypoint: expected_apt_wait
       * Param: None
       * Return: Array showing the number of entries in all queues and the approximate waiting time in minutes: [${Number of Entries}, ${Waiting Time}].
    2. Create appointment
-      * Entrypoint: appointment?priority=${Priority}
+      * Entrypoint: create_apt?priority=${Priority}
       * Param: priority Priority queue to put appointment into. Priority is a number in the interval [0, 9]. Default 0
       * Return: UUID "Appointment ID" of the new appointment if appointment was successfully scheduled.
-   3. Get an appointments waiting time
-      * Entrypoint: appointment/waitingtime?id=${Appointment ID}
+   3. Get an Appointment's Waiting Time
+      * Entrypoint: apt_status?id=${Appointment ID}
       * Param: id Appointment ID
       * Return: Array showing the number of entries in the queue ahead of the given appointment and the approximate waiting time in minutes: [${Waiting Position}, ${Waiting Time}]. HTTP 404 if the appointment does not exist.
       * Example:
-   4. Start an apointment
-      * Entrypoint: appointment/start?id=${Appointment ID}
+   4. Start an Apointment
+      * Entrypoint: start_apt?id=${Appointment ID}
       * Param: id Appointment ID
       * Return: "true" if the given appointment had not been started and its status was successfully transitioned to have started. "false" if the given appointment has already been started. HTTP 404 if the appointment does not exist.
       * Example:
-   5. End appointment
-      * Entrypoint: appointment/end?id=${Appointment ID}
+   5. End Appointment
+      * Entrypoint: end_apt?id=${Appointment ID}
       * Param: id Appointment ID
       * Return: "true" if appointment exists and has been set to have ended. HTTP 404 if appointment does not exist
-   6. Get all appointments for hospital
-      * Entrypoint: appointments
+   6. Get All Appointments for Hospital
+      * Entrypoint: all_appointments
       * Param: None
       * Return: Map of priorities to queues. Queues as an array containing all entries with their status as tupel.
-    {0: [[${Appointment ID}, ${Status}], ... ], 1: [[${Appointment ID}, ${Status}], ... ], ... 9: []}
+      {0: [[${Appointment ID}, ${Status}], ... ], 1: [[${Appointment ID}, ${Status}], ... ], ... 9: []}
 2. Rückruf (Audio oder Video)
-   1. get call wait time
-   2. request call for hospital
-   3. call position in list status
-   4. answer call for hospital
+   1. Get Queue Length and Wait Time
+       * Entrypoint: expected_call_wait
+       * See documentation for apointment.
+   2. Create Video Callback Request
+       * Entrypoint: request_call?priority=${Priority}
+       * See documentation for apointment.
+   3. Get a Callback Request's Waiting Time
+       * Entrypoint: call_status?id=${Appointment ID}
+       * See documentation for apointment.
+   4. Answer Call for Hospital
+       * Entrypoint: start_call?id=${Appointment ID}
+       * See documentation for apointment.
    5. Call finished
-   6. list calls for hospital
-   7. Get all appointments for hospital
-       * Entrypoint appointment/callurl?id=${Appointment ID}
+       * Entrypoint: call_finished?id=${Appointment ID}
+       * See documentation for apointment.
+   6. Get All Callback Requests for Hospital
+       * Entrypoint: all_calls
+       * See documentation for apointment.
+   7. Get video call URL
+       * Entrypoint: call_url?id=${Appointment ID}
        * Param:  id Appointment ID
        * Return: URL String, for example "https://meet.jit.si/....".
 3. get hospitals

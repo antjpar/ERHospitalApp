@@ -193,8 +193,8 @@ class Server(object):
         return id
 
     @cherrypy.expose
-    def call_status(self, call_id):
-        found = self.find_call(call_id)
+    def call_status(self, id):
+        found = self.find_call(id)
         if found:
             index = self.call_queue.before(found)
             return json.dumps([
