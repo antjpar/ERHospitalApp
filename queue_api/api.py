@@ -6,7 +6,6 @@ import uuid
 
 MINUTES_PER_PATIENT = 5
 
-
 class PrioQueue(object):
     def __init__(self):
         self.data = []
