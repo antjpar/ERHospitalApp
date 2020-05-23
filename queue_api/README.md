@@ -48,11 +48,11 @@ Ended: The consultation has ended. The patient has been dismissed.
       * Param: id Appointment ID
       * Return: "true" if the given appointment had not been started and its status was successfully transitioned to have started. "false" if the given appointment has already been started. HTTP 404 if the appointment does not exist.
       * Example:
-  5. End appointment
+   5. End appointment
       * Entrypoint: appointment/end?id=${Appointment ID}
       * Param: id Appointment ID
       * Return: "true" if appointment exists and has been set to have ended. HTTP 404 if appointment does not exist
-  6. Get all appointments for hospital
+   6. Get all appointments for hospital
       * Entrypoint: appointments
       * Param: None
       * Return: Map of priorities to queues. Queues as an array containing all entries with their status as tupel.
