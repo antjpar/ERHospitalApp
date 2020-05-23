@@ -4,7 +4,9 @@ import cherrypy
 import json
 import uuid
 
+MINUTES_PER_CALL = 2
 MINUTES_PER_PATIENT = 5
+JITSI_BASE_URL = 'https://call.parsons.group/'
 
 class PrioQueue(object):
     def __init__(self):
@@ -64,8 +66,9 @@ class PrioQueue(object):
 class Server(object):
     def __init__(self):
         self.apt_queue = PrioQueue()
-        self.call_queue = []
+        self.call_queue = PrioQueue()
         self.apt_ongoing = []
+        self.call_ongoing = []
 
     def find_apt(self, apt_id):
         return self.apt_queue.find(apt_id)
@@ -74,6 +77,15 @@ class Server(object):
         for apt in self.apt_ongoing:
             if apt['id'] == apt_id:
                 return apt
+        return None
+
+    def find_call(self, call_id):
+        return self.call_queue.find(call_id)
+
+    def find_ongoing_call(self, call_id):
+        for call in self.call_ongoing:
+            if call['id'] == call_id:
+                return call
         return None
 
     def create_id(self):
@@ -92,68 +104,131 @@ class Server(object):
 
     @cherrypy.expose
     def all_appointments(self):
-        return json.dumps(self.apt_queue.all_with_prio())
+        prioritized = {}
+        for i in range(0, 10):
+            prioritized[str(i)] = []
+        for apt in self.apt_queue.all_with_prio():
+            apt = apt['item']
+            prioritized[str(apt['prio'])].append([apt['id'], 'waiting'])
+        for apt in self.apt_ongoing:
+            prioritized[str(apt['prio'])].append([apt['id'], 'ongoing'])
+        return json.dumps(prioritized)
 
     @cherrypy.expose
     def expected_apt_wait(self):
-        return json.dumps(self.apt_queue.count_inner() * MINUTES_PER_PATIENT)
+        n = self.apt_queue.count_inner()
+        return json.dumps([
+            n,
+            n * MINUTES_PER_PATIENT
+        ])
 
     @cherrypy.expose
-    def create_apt(self, prio):
+    def create_apt(self, priority=0):
         id = self.create_id()
         self.apt_queue.push({
-            'id': id
-        }, int(prio))
+            'id': id,
+            'prio': int(priority)
+        }, int(priority))
         return id
 
     @cherrypy.expose
-    def apt_status(self, apt_id=None):
-        found = self.find_apt(apt_id)
+    def apt_status(self, id=None):
+        found = self.find_apt(id)
         if found:
             index = self.apt_queue.before(found)
-            return json.dumps({
-                'wait_time': index * MINUTES_PER_PATIENT,
-                'before_you': index
-            })
+            return json.dumps([
+                index + 1,
+                index * MINUTES_PER_PATIENT
+            ])
         else:
-            return 'Not found'
+            raise cherrypy.HTTPError(404)
 
     @cherrypy.expose
-    def start_apt(self, apt_id=None):
-        found = self.find_apt(apt_id)
+    def start_apt(self, id=None):
+        found = self.find_apt(id)
         if found:
             self.apt_queue.remove(found)
             self.apt_ongoing.append(found)
+            return 'true'
         else:
-            return 'Not found'
+            raise cherrypy.HTTPError(404)
 
     @cherrypy.expose
-    def end_apt(self, apt_id=None):
-        pass
+    def end_apt(self, apt_id):
+        found = self.find_ongoing_apt(apt_id)
+        if found:
+            self.apt_ongoing.remove(found)
+            return 'true'
+        else:
+            raise cherrypy.HTTPError(404)
 
     @cherrypy.expose
     def all_calls(self):
-        return json.dumps(self.call_queue)
+        prioritized = {}
+        for i in range(0, 10):
+            prioritized[str(i)] = []
+        for call in self.call_queue.all_with_prio():
+            call = call['item']
+            prioritized[str(call['prio'])].append([call['id'], 'waiting'])
+        for call in self.call_ongoing:
+            prioritized[str(call['prio'])].append([call['id'], 'ongoing'])
+        return json.dumps(prioritized)
 
     @cherrypy.expose
     def expected_call_wait(self):
-        pass
+        n = self.call_queue.count_inner()
+        return json.dumps([
+            n,
+            n * MINUTES_PER_CALL
+        ])
 
     @cherrypy.expose
-    def request_call(self):
-        pass
+    def request_call(self, priority=0):
+        id = self.create_id()
+        self.call_queue.push({
+            'id': id,
+            'prio': int(priority)
+        }, int(priority))
+        return id
 
     @cherrypy.expose
-    def call_status(self):
-        pass
+    def call_status(self, id):
+        found = self.find_call(id)
+        if found:
+            index = self.call_queue.before(found)
+            return json.dumps([
+                index + 1,
+                index * MINUTES_PER_CALL
+            ])
+        else:
+            raise cherrypy.HTTPError(404)
 
     @cherrypy.expose
-    def answer_call(self):
-        pass
+    def start_call(self, id):
+        found = self.find_call(id)
+        if found:
+            self.call_queue.remove(found)
+            self.call_ongoing.append(found)
+            return 'true'
+        else:
+            raise cherrypy.HTTPError(404)
 
     @cherrypy.expose
-    def call_finished(self):
-        pass
+    def call_finished(self, id):
+        found = self.find_ongoing_call(id)
+        if found:
+            self.call_ongoing.remove(found)
+            return 'true'
+        else:
+            raise cherrypy.HTTPError(404)
+
+    @cherrypy.expose
+    def call_url(self, id):
+        found = self.find_ongoing_call(id)
+        if found:
+            return JITSI_BASE_URL + id
+        else:
+            raise cherrypy.HTTPError(404)
 
 
 def CORS():
