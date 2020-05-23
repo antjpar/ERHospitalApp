@@ -1,11 +1,19 @@
 version: "3"
 services:
+  queueapi:
+    build:
+      context: queue_api
+    image: queueapi
+    environment:
+      - VIRTUAL_HOST=api.ichdev.net
+      - VIRTUAL_PORT=8545
+      - LETSENCRYPT_HOST=call.ichdev.net
+    networks:
+      - webproxy
   start_call:
     build:
       context: initiate_call
     image: startcall
-    ports:
-      - "8080:80"
     environment:
       - VIRTUAL_HOST=call.ichdev.net
       - LETSENCRYPT_HOST=call.ichdev.net
