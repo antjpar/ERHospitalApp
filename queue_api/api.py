@@ -130,7 +130,13 @@ class Server(object):
 
     @cherrypy.expose
     def end_apt(self, apt_id=None):
-        pass
+        found = self.find_ongoing_apt(apt_id)
+        if found:
+            self.apt_ongoing.remove(found)
+
+    @cherrypy.expose
+    def ongoing_apts(self):
+        return json.dumps(self.apt_ongoing)
 
     @cherrypy.expose
     def all_calls(self):
