@@ -223,6 +223,7 @@ class Server(object):
         else:
             raise cherrypy.HTTPError(404)
 
+    @cherrypy.expose
     def call_url(self, id):
         found = self.find_ongoing_call(id)
         if found:
