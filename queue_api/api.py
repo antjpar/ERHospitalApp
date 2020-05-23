@@ -165,11 +165,11 @@ cherrypy.config.update({
     'cors.expose.on': True,
 })
 cherrypy.tools.CORS = cherrypy.Tool('before_finalize', CORS)
+cherrypy.server.socket_host = '0.0.0.0'
 cherrypy.quickstart(
     Server(),
     config={
         '/': {
-            # 'request.dispatch':
-            #     cherrypy.dispatch.MethodDispatcher(),
-            'tools.CORS.on': True}}
+            'tools.CORS.on': True}
+    }
 )
