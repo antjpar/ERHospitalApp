@@ -19,6 +19,15 @@ services:
       - LETSENCRYPT_HOST=call.ichdev.net
     networks:
       - webproxy
+  server:
+    image: server
+    environment:
+      - VIRTUAL_HOST=medapi.ichdev.net
+      - LETSENCRYPT_HOST=medapi.ichdev.net
+    build:
+      context: server
+    networks:
+      - webproxy
 
 networks:
   webproxy:

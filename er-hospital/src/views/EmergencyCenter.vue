@@ -28,7 +28,8 @@ export default {
     }
   },
   methods: {
-    sendSMS: function () {},
+    sendSMS: function () {
+    },
   },
 }
 </script>
