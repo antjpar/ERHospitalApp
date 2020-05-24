@@ -19,7 +19,7 @@
       </v-progress-circular>
     </label>
     <label  :class="$style.graph">
-      Durchschnittliche Warteschlage:
+      Durchschnittliche Wartezeit:
       <v-progress-circular width="20" size="150" value="60" color="green">
         1h 30m
       </v-progress-circular>
@@ -35,14 +35,16 @@ export default {
 
 <style module lang="scss">
   .graph {
+    text-align: center;
     display: grid;
-    row-gap: 2rem;
+    row-gap:2rem;
     grid-template-rows: 1fr 6fr;
   }
 .dashThings {
   display: flex;
   flex-wrap: wrap;
-  padding: 2rem;
+  padding: 5rem;
   gap: 10vw;
+  justify-content: center;
 }
 </style>

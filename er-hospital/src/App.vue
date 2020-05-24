@@ -25,10 +25,6 @@
         Emergency Room
         <v-icon>videocam</v-icon>
       </v-btn>
-      <v-btn icon="assignment" link to="/checkin">
-        Check-In
-        <v-icon>assignment</v-icon>
-      </v-btn>
     </v-bottom-navigation>
   </v-app>
 </template>

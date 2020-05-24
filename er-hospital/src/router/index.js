@@ -4,7 +4,6 @@ import Dashboard from '../views/Dashboard'
 import WaitingRoom from '../views/WaitingRoom'
 import CallCenter from '../views/CallCenter'
 import EmergencyCenter from '../views/EmergencyCenter'
-import Checkin from '../views/Checkin'
 
 Vue.use(VueRouter)
 
@@ -28,11 +27,6 @@ const routes = [
     path: '/emergency',
     name: 'EmergencyCenter',
     component: EmergencyCenter,
-  },
-  {
-    path: '/checkin',
-    name: 'Checkin',
-    component: Checkin,
   },
 ]
 
