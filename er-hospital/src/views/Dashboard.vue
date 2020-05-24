@@ -6,19 +6,19 @@
         2
       </v-progress-circular>
     </label>
-    <label  :class="$style.graph">
+    <label :class="$style.graph">
       Unterwegs:
       <v-progress-circular width="20" size="150" value="10" color="blue">
         10
       </v-progress-circular>
     </label>
-    <label  :class="$style.graph">
+    <label :class="$style.graph">
       Warten:
       <v-progress-circular width="20" size="150" value="55" color="orange">
         55
       </v-progress-circular>
     </label>
-    <label  :class="$style.graph">
+    <label :class="$style.graph">
       Durchschnittliche Wartezeit:
       <v-progress-circular width="20" size="150" value="60" color="green">
         1h 30m
@@ -34,12 +34,13 @@ export default {
 </script>
 
 <style module lang="scss">
-  .graph {
-    text-align: center;
-    display: grid;
-    row-gap:2rem;
-    grid-template-rows: 1fr 6fr;
-  }
+.graph {
+  text-align: center;
+  display: grid;
+  column-gap: 1rem;
+  row-gap: 2rem;
+  grid-template-rows: 1fr 6fr;
+}
 .dashThings {
   display: flex;
   flex-wrap: wrap;
