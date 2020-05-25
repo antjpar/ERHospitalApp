@@ -14,11 +14,11 @@
       <v-card>
         <v-card-title>Wir verbinden Sie...</v-card-title>
         <v-card-text>
-          <div>INSERT JITSI</div>
+          <div><img width=400 src="../assets/call.png"></div>
           <v-text-field v-model="notes"></v-text-field>
         </v-card-text>
         <v-card-actions>
-          <v-btn>Auflegen</v-btn>
+          <v-btn @click="showDialog = false">Auflegen</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -34,6 +34,7 @@ export default Vue.extend({
     return {
       notes: 'Das ist ein nützlicher Anamnese-Text',
       showDialog: false,
+      api: null,
       waiting: [
         {
           id: 1,
@@ -78,7 +79,8 @@ export default Vue.extend({
         },
       ]
     },
-  },
+
+  }
 })
 </script>
 
